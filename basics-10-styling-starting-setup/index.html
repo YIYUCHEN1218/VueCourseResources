@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue Basics</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/vue@3.4.9/dist/vue.global.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>Vue Dynamic Styling</h1>
+    </header>
+    <section id="styling">
+      <p>A: {{ boxASelected }}</p>
+      <p>B: {{ boxBSelected }}</p>
+      <p>C: {{ boxCSelected }}</p>
+      <div
+        class="demo"
+        :style="{borderColor:boxASelected? 'red':'#CCC'}"
+        @click="boxSelected('A')"
+      >
+        {{boxASelected}}
+      </div>
+      <div
+        class="demo"
+        :style="{'border-color':boxBSelected?'red':'#CCC'}"
+        @click="boxSelected('B')"
+      >
+        {{boxBSelected}}
+      </div>
+      <!-- 使用簡單三元運算子 -->
+      <!--       <div :class="boxCSelected?'demo active':'demo'" @click="boxSelected('C')">
+        {{boxCSelected}}
+      </div> -->
+      <!-- 使用物件對 -->
+      <!-- <div :class="{demo:true,active:boxCSelected}" @click="boxSelected('C')">
+        {{boxCSelected}}
+      </div> -->
+      <!-- 陣列 -->
+      <div :class="['demo',{active:boxCSelected}]" @click="boxSelected('C')">
+        {{boxCSelected}}
+      </div>
+      <!-- 可以同時使用class 和 :class -->
+      <!-- <div
+        class="demo"
+        :class="{active:boxCSelected}"
+        @click="boxSelected('C')"
+      >
+        {{boxCSelected}}
+      </div> -->
+      <div class="demo" :class="boxCClasses" @click="boxSelected('C')">
+        {{boxCSelected}}
+      </div>
+    </section>
+  </body>
+</html>
