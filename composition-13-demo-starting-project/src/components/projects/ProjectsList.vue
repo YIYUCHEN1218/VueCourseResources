@@ -8,7 +8,7 @@
     ></base-search>
     <ul v-if="hasProjects">
       <project-item
-        v-for="prj in availableProjects"
+        v-for="prj in availableItems"
         :key="prj.id"
         :title="prj.title"
       ></project-item>
@@ -22,41 +22,41 @@
 
 <script setup>
 import ProjectItem from './ProjectItem.vue';
-import { ref, defineProps, computed, watch, toRefs } from 'vue';
+import { defineProps, computed, watch, toRefs } from 'vue';
+import useSearch from '../../hooks/search';
+import { isReactive, isRef } from 'vue';
 
-const enteredSearchTerm = ref('');
-const activeSearchTerm = ref('');
 const props = defineProps({ user: Object });
 
-const hasProjects = computed(function () {
-  return props.user.projects && availableProjects.value.length > 0;
-});
-const availableProjects = computed(function () {
-  if (activeSearchTerm.value) {
-    return props.user.projects.filter((prj) =>
-      prj.title.includes(activeSearchTerm.value)
-    );
-  }
-  return props.user.projects;
-});
-
-function updateSearch(val) {
-  enteredSearchTerm.value = val;
-}
-
-watch(enteredSearchTerm, function (val) {
-  setTimeout(() => {
-    if (val === enteredSearchTerm.value) {
-      activeSearchTerm.value = val;
-    }
-  }, 300);
-});
+console.log('=============');
+console.log(isReactive(props)); // ✅ true
+console.log(isReactive(props.user)); // ❌ false
+console.log(isRef(props.user)); // ❌ false（不是 ref）
 
 /* 因為props.user不是響應 可使用toRefs解決 */
 const { user } = toRefs(props);
-watch(user, function () {
-  enteredSearchTerm.value = '';
+
+// 取得 projects（computed 是響應式）
+const projects = computed(function () {
+  return user.value ? user.value.projects : [];
 });
+
+const { enteredSearchTerm, activeSearchTerm, availableItems, updateSearch } =
+  useSearch(projects, 'title');
+
+// 判斷是否有專案（正確寫法）
+const hasProjects = computed(function () {
+  return user.value.projects && availableItems.value.length > 0;
+});
+
+watch(user, function () {
+  updateSearch('');
+});
+/* const projects = computed(function () {
+  return props.user ? props.user.projects : [];
+}); */
+/* const projects = user.value ? user.value.projects : []; */
+console.log(activeSearchTerm);
 </script>
 
 <style scoped>
